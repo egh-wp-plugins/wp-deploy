@@ -1,11 +1,9 @@
 import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { join, basename, dirname } from 'path';
+import { join, basename } from 'path';
 import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
 const pluginDir = process.cwd();
 const pluginName = basename(pluginDir);
-const deployJsPath = join(__dirname, 'deploy.js');
 
 console.log(`\n🔧 Setting up deployment for plugin: ${pluginName}`);
 
@@ -24,9 +22,9 @@ if (existsSync(packageJsonPath)) {
 
 if (!packageJson.scripts) packageJson.scripts = {};
 
-// Add the deploy script pointing to the central deploy.js
-packageJson.scripts.deploy = `node "${deployJsPath}" production`;
-packageJson.scripts["deploy:staging"] = `node "${deployJsPath}" staging`;
+// Use a sibling wp-deploy repo so commands work from any plugin in this checkout layout.
+packageJson.scripts.deploy = 'node "../wp-deploy/deploy.js" production';
+packageJson.scripts["deploy:staging"] = 'node "../wp-deploy/deploy.js" staging';
 
 writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 

@@ -6,9 +6,11 @@ This folder contains a universal deployment engine for WordPress plugins. It is 
 
 If you are an AI assisting the user on this machine, follow these rules:
 
-1.  **Context**: The user has their plugins managed locally inside `../` relative to `wp-deploy`.
-2.  **Deployment Engine**: Always use `deploy.js` located in this folder. It handles OS detection (Windows vs Mac) and environment routing, and specific file transfers.
-3.  **Current Plugin Logic**: If the user is inside a plugin folder, you can deploy it by specifying its folder name, environment, and specific files to upload.
+1.  **Pull First**: Before starting work on any plugin, always pull the latest changes from GitHub for that plugin repo.
+2.  **Context**: The user has their plugins managed locally inside `../` relative to `wp-deploy`.
+3.  **Deployment Engine**: Always use `deploy.js` located in this folder. It handles OS detection (Windows vs Mac) and environment routing, and specific file transfers.
+4.  **Version Bump for Cache Busting**: When a plugin change affects frontend assets or enqueued styles/scripts, bump the plugin version number in the main plugin PHP file before deploying so WordPress serves fresh assets.
+5.  **Current Plugin Logic**: If the user is inside a plugin folder, you can deploy it by specifying its folder name, environment, and specific files to upload.
 
 ### Deployment Commands
 
@@ -73,9 +75,20 @@ To push a plugin to the organization, use the following flow:
 5.  **Push**: `git push -u origin main`
 
 ### Pulling Updates
-To pull the latest version of a plugin:
+Before making changes to a plugin, pull the latest version first:
 ```bash
 git pull origin main
+```
+
+This should be treated as a standard first step before editing.
+
+### Cache Busting Reminder
+If you change CSS, JavaScript, or any other asset that may be cached by WordPress or the browser, bump the plugin version number in the main plugin PHP file before deployment.
+
+Example:
+
+```php
+Version: 1.7
 ```
 
 ---

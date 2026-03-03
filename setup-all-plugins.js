@@ -1,10 +1,10 @@
 import { writeFileSync, readFileSync, existsSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
-// This path is relative from any plugin folder to the deploy.js file
-const RELATIVE_DEPLOY_PATH = "../../../../wp-deploy/deploy.js";
-
-const pluginsDir = "c:/Users/NW USER/Desktop/ai projects/staging/wp-content/plugins";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const RELATIVE_DEPLOY_PATH = "../wp-deploy/deploy.js";
+const pluginsDir = join(__dirname, "..");
 console.log(`\n🔍 Scanning for plugins in: ${pluginsDir}`);
 
 const items = readdirSync(pluginsDir);
@@ -13,6 +13,10 @@ items.forEach(item => {
     const fullPath = join(pluginsDir, item);
 
     // Only process directories and ignore hidden folders or backups
+    if (item === 'wp-deploy') {
+        return;
+    }
+
     if (statSync(fullPath).isDirectory() && !item.startsWith('.') && !item.includes(' - Copy')) {
         const packageJsonPath = join(fullPath, 'package.json');
         let packageJson = {};

@@ -1,14 +1,17 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="$SCRIPT_DIR/.env.deploy"
+
 # Arguments
 PLUGIN_NAME=$1
 ENV=${2:-staging}
 
-# Load environment variables
-if [ -f .env.deploy ]; then
-    export $(grep -v '^#' .env.deploy | xargs)
+# Load environment variables relative to this script so the command works from any cwd
+if [ -f "$ENV_FILE" ]; then
+    export $(grep -v '^#' "$ENV_FILE" | xargs)
 else
-    echo ".env.deploy file not found!"
+    echo ".env.deploy file not found at $ENV_FILE!"
     exit 1
 fi
 
@@ -21,7 +24,12 @@ else
     ENV_NAME="STAGING"
 fi
 
-LOCAL_PATH="$LOCAL_PLUGINS_DIR/$PLUGIN_NAME"
+case "$LOCAL_PLUGINS_DIR" in
+    /*) LOCAL_PLUGINS_PATH="$LOCAL_PLUGINS_DIR" ;;
+    *) LOCAL_PLUGINS_PATH="$SCRIPT_DIR/$LOCAL_PLUGINS_DIR" ;;
+esac
+
+LOCAL_PATH="$LOCAL_PLUGINS_PATH/$PLUGIN_NAME"
 REMOTE_PATH="$REMOTE_BASE/$PLUGIN_NAME"
 
 # Check if local plugin exists
@@ -38,6 +46,8 @@ ssh -p $DEPLOY_PORT "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p $REMOTE_PATH"
 # Run rsync
 # Exclude system files and common backup suffixes
 rsync -avz --delete \
+    --exclude '.git' \
+    --exclude '.gitignore' \
     --exclude '.DS_Store' \
     --exclude '*- Copy*' \
     --exclude 'node_modules' \
