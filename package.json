@@ -1,0 +1,10 @@
+{
+    "name": "wp-plugin-deployer",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "deploy": "node deploy.js",
+        "deploy:staging": "node deploy.js $1 staging",
+        "deploy:production": "node deploy.js $1 production"
+    }
+}
