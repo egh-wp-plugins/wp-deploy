@@ -64,7 +64,14 @@ function wp-test {
 
 ## 🐙 GitHub Organization (egh-wp-plugins)
 
-All plugins in this ecosystem are hosted under the [egh-wp-plugins](https://github.com/egh-wp-plugins) organization.
+All WordPress plugins in this ecosystem should live under the [egh-wp-plugins](https://github.com/egh-wp-plugins) organization.
+
+### Repository Policy
+
+- Every standalone plugin in `../` should have its own GitHub repository under `egh-wp-plugins`.
+- New plugins should be created in that organization by default unless the user explicitly says otherwise.
+- Match the existing convention: one repo per plugin, with the repo name matching the local plugin folder name.
+- Before starting work on an existing plugin, pull the latest changes from its repo in `egh-wp-plugins`.
 
 ### Pushing to GitHub
 To push a plugin to the organization, use the following flow:
