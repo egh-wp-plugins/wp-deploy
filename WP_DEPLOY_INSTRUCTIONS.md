@@ -10,7 +10,8 @@ If you are an AI assisting the user on this machine, follow these rules:
 2.  **Context**: The user has their plugins managed locally inside `../` relative to `wp-deploy`.
 3.  **Deployment Engine**: Always use `deploy.js` located in this folder. It handles OS detection (Windows vs Mac) and environment routing, and specific file transfers.
 4.  **Version Bump for Cache Busting**: When a plugin change affects frontend assets or enqueued styles/scripts, bump the plugin version number in the main plugin PHP file before deploying so WordPress serves fresh assets.
-5.  **Current Plugin Logic**: If the user is inside a plugin folder, you can deploy it by specifying its folder name, environment, and specific files to upload.
+5.  **Protected Remote Paths**: If a plugin includes a `.deploy-preserve` file, treat those paths as off-limits during full deploys. They stay untouched on the server and should only be uploaded with an explicit file-targeted deploy.
+6.  **Current Plugin Logic**: If the user is inside a plugin folder, you can deploy it by specifying its folder name, environment, and specific files to upload.
 
 ### Deployment Commands
 
@@ -23,6 +24,21 @@ If you are an AI assisting the user on this machine, follow these rules:
 *   **Staging**: `node "[PATH_TO_WP_DEPLOY]\deploy.js" [PLUGIN_NAME] staging [FILE_1] [FILE_2]`
 
 *Note: the `[FILE_1]` parameters are optional. If not provided, it deploys the entire plugin folder (though that is slower).*
+
+### Preserving Remote Media or Generated Assets
+
+Plugins can opt into safer full deploys by adding a `.deploy-preserve` file at the plugin root:
+
+```text
+# One relative path per line
+audio/
+images/
+```
+
+When this file exists:
+
+* Full deploys skip those paths locally and preserve the remote copies.
+* Explicit file deploys still upload exactly what you ask for, including files inside preserved folders.
 
 ### Using package.json scripts (npm run deploy)
 
